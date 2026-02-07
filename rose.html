@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Rose For You 🌹</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fff5f7 0%, #ffd1dc 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .rose-container {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(219, 39, 119, 0.1);
+        }
+
+        .btn-transition {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .crying-emoji {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .show-emoji {
+            opacity: 1;
+        }
+
+        /* Modal styling */
+        #success-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #success-modal.active {
+            display: flex;
+        }
+
+        .petal {
+            position: fixed;
+            background-color: #ffb7c5;
+            border-radius: 150% 0 150% 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="max-w-md w-full p-6 text-center z-10">
+        <div class="glass-card rounded-3xl p-8 relative">
+            
+            <!-- Floating Rose -->
+            <div class="rose-container mb-6">
+                <svg width="120" height="120" viewBox="0 0 100 100" class="mx-auto">
+                    <!-- Stem -->
+                    <path d="M50 95 Q50 60 50 40" stroke="#2d5a27" stroke-width="3" fill="none" />
+                    <!-- Leaf -->
+                    <path d="M50 70 Q30 65 35 55 Q45 50 50 70" fill="#4a7c44" />
+                    <!-- Rose Petals -->
+                    <circle cx="50" cy="35" r="20" fill="#e11d48" />
+                    <circle cx="40" cy="30" r="15" fill="#f43f5e" />
+                    <circle cx="60" cy="30" r="15" fill="#f43f5e" />
+                    <circle cx="50" cy="22" r="12" fill="#fb7185" />
+                    <path d="M42 25 Q50 15 58 25" fill="none" stroke="#be123c" stroke-width="1" />
+                </svg>
+            </div>
+
+            <h1 class="cursive text-4xl text-rose-600 mb-2">Happy Rose Day!</h1>
+            <p class="text-gray-600 mb-8 font-semibold">Will you accept this rose and be mine forever?</p>
+
+            <!-- Buttons Section -->
+            <div class="relative flex flex-col items-center justify-center gap-6 min-h-[150px]">
+                <div id="crying-emoji" class="crying-emoji">😭</div>
+                
+                <button id="accept-btn" class="btn-transition bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-10 rounded-full shadow-lg z-20">
+                    Yes, I Accept! ❤️
+                </button>
+
+                <button id="reject-btn" class="btn-transition bg-gray-200 hover:bg-gray-300 text-gray-600 font-semibold py-2 px-6 rounded-full text-sm">
+                    No, Sorry 💔
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Popup -->
+    <div id="success-modal">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
+            <h2 class="cursive text-3xl text-rose-600 mb-4">Happy Rose Day Anuuuuuu</h2>
+            <div class="mb-6 rounded-xl overflow-hidden">
+                <!-- Bubu Dudu GIF -->
+                <img src="download.jpg" alt="Bubu Dudu Love" class="w-full h-auto mx-auto">
+            </div>
+            <p class="text-gray-700 mb-6 italic">"This rose is a tiny reminder that someone, somewhere, smiles a little more because you exist."</p>
+            <button onclick="closeModal()" class="bg-rose-100 text-rose-600 font-bold py-2 px-6 rounded-full hover:bg-rose-200 transition-colors">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const acceptBtn = document.getElementById('accept-btn');
+        const rejectBtn = document.getElementById('reject-btn');
+        const cryingEmoji = document.getElementById('crying-emoji');
+        const successModal = document.getElementById('success-modal');
+
+        let acceptScale = 1;
+        let rejectScale = 1;
+        let rejectClickCount = 0;
+
+        // Interaction for Reject Button
+        rejectBtn.addEventListener('click', () => {
+            rejectClickCount++;
+
+            // Show crying emoji briefly
+            cryingEmoji.classList.add('show-emoji');
+            setTimeout(() => {
+                cryingEmoji.classList.remove('show-emoji');
+            }, 1000);
+
+            // Shrink Reject Button
+            rejectScale -= 0.15;
+            if (rejectScale < 0.2) rejectScale = 0.1; // Don't let it disappear completely
+            rejectBtn.style.transform = `scale(${rejectScale})`;
+            
+            // Grow Accept Button
+            acceptScale += 0.4;
+            acceptBtn.style.transform = `scale(${acceptScale})`;
+
+            // Move the Reject button randomly to make it harder to click (optional fun)
+            if (rejectClickCount > 2) {
+                const x = Math.random() * 40 - 20;
+                const y = Math.random() * 20 - 10;
+                rejectBtn.style.transform += ` translate(${x}px, ${y}px)`;
+            }
+
+            // Update text after some clicks
+            if (rejectClickCount === 2) rejectBtn.innerText = "Are you sure? 🥺";
+            if (rejectClickCount === 4) rejectBtn.innerText = "Really? 😢";
+            if (rejectClickCount >= 6) rejectBtn.innerText = "...";
+        });
+
+        // Interaction for Accept Button
+        acceptBtn.addEventListener('click', () => {
+            successModal.classList.add('active');
+            createHeartShower();
+        });
+
+        function closeModal() {
+            successModal.classList.remove('active');
+        }
+
+        // Background Animation: Falling Petals
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.width = Math.random() * 15 + 10 + 'px';
+            petal.style.height = petal.style.width;
+            petal.style.opacity = Math.random() * 0.5 + 0.3;
+            petal.style.top = '-20px';
+            
+            const duration = Math.random() * 3 + 4;
+            petal.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: petal.style.opacity },
+                { transform: `translateY(105vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+            ], {
+                duration: duration * 1000,
+                easing: 'linear'
+            });
+
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), duration * 1000);
+        }
+
+        function createHeartShower() {
+            for(let i=0; i<30; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.innerHTML = '❤️';
+                    heart.style.position = 'fixed';
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.top = '100vh';
+                    heart.style.fontSize = Math.random() * 20 + 20 + 'px';
+                    heart.style.zIndex = '100';
+                    
+                    heart.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(-110vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                    ], {
+                        duration: 3000,
+                        easing: 'ease-out'
+                    });
+                    
+                    document.body.appendChild(heart);
+                    setTimeout(() => heart.remove(), 3000);
+                }, i * 100);
+            }
+        }
+
+        setInterval(createPetal, 500);
+    </script>
+</body>
+</html>
